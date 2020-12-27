@@ -45,10 +45,16 @@ function pushToDOM(input) {
 
     var response = JSON.parse(input);
 
-    var imageURL = response.data[0].images.fixed_height.url;
-    console.log(imageURL);
+    var imageUrls = response.data;
 
-    var container = document.querySelector(".js-container");
-    container.innerHTML = "<img src=\"https://media3.giphy.com/media/Z1kpfgtHmpWHS/200.gif\">";
+    imageUrls.forEach(function(image) {
+
+        var src = image.images.fixed_height.url;
+        console.log(src);
+
+        var container = document.querySelector(".js-container");
+        container.innerHTML += "<img src=\"" + src + "\" class=\"container-image\">";
+
+    });
 
 }
