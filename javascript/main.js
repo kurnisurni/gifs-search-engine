@@ -1,60 +1,59 @@
 /* 1. Grab the input value */
-
-
 document.querySelector(".js-go").addEventListener('click', function() {
-
-    var input = document.querySelector("input").value;
-    pushToDOM(input);
-
+    var inputValue = document.querySelector('.js-userinput').value;
+    var userInput = getUserInput();
+    searchGiphy(userInput);
 });
 
-document.querySelector(".js-userinput").addEventListener('keyup', function(e) {
-
-    var input = document.querySelector("input").value;
-
-    // if the key ENTER is pressed...
+document.querySelector('.js-userinput').addEventListener('keyup', function(e) {
     if (e.which === 13) {
-        pushToDOM(input);
+        var userInput = getUserInput();
+        searchGiphy(userInput);
     }
-
 });
+
+function getUserInput() {
+    var inputValue = document.querySelector('.js-userinput').value;
+
+    return inputValue;
+}
 
 /* 2. do the data stuff with the API */
+function searchGiphy(searchQuery) {
+    var url = "https://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q=" + searchQuery;
 
-var url = "http://api.giphy.com/v1/gifs/search?q=funny+cat&api_key=dc6zaTOxFJmzC";
-
-// AJAX Request
-var GiphyAJAXCall = new XMLHttpRequest();
-GiphyAJAXCall.open('GET', url);
-GiphyAJAXCall.send();
-
-GiphyAJAXCall.addEventListener('load', function(e) {
-
-    var data = e.target.response;
-    pushToDOM(data);
-
-});
+    // AJAX Request
+    var GiphyAJAXCall = new XMLHttpRequest();
+    GiphyAJAXCall.open('GET', url);
+    GiphyAJAXCall.send();
 
 
-
+    GiphyAJAXCall.addEventListener('load', function(data) {
+        var actualData = data.target.response;
+        pushToDOM(actualData);
+        console.log(actualData);
+    });
+}
 
 /* 3. Show me the GIFs */
+function pushToDOM(response) {
+    // turn response into real javascript object
+    response = JSON.parse(response);
+    // drill down to the data array
+    var images = response.data;
 
+    // find the container to hold this stuff in DOM
+    var container = document.querySelector('.js-container');
+    // clear it of old content since this function will be used on every search
+    // we want to reset the div
+    container.innerHTML = "";
 
-function pushToDOM(input) {
-
-    var response = JSON.parse(input);
-
-    var imageUrls = response.data;
-
-    imageUrls.forEach(function(image) {
-
+    // loop through data array and add IMG html
+    images.forEach(function(image) {
+        // find img src
         var src = image.images.fixed_height.url;
-        console.log(src);
 
-        var container = document.querySelector(".js-container");
-        container.innerHTML += "<img src=\"" + src + "\" class=\"container-image\">";
-
+        // concatenate a new IMG tag
+        container.innerHTML += "<img src='" + src + "' class='container-image' />";
     });
-
 }
